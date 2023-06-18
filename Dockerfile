@@ -112,13 +112,24 @@ RUN \
 	&& apk add --no-cache --virtual .geoip2-build-deps \
 		libmaxminddb-dev \
 	&& apk add --no-cache --virtual .njs-build-deps \
-		readline-dev
+		readline-dev \
+		git
 
 WORKDIR /usr/src/
 
 RUN \
 	echo "Cloning nginx $NGINX_VERSION (rev $NGINX_COMMIT from 'quic' branch) ..." \
 	&& hg clone -b quic --rev $NGINX_COMMIT https://hg.nginx.org/nginx-quic /usr/src/nginx-$NGINX_VERSION
+
+COPY Enable_BoringSSL_OCSP.patch /usr/src/nginx-$NGINX_VERSION/Enable_BoringSSL_OCSP.patch
+
+WORKDIR /usr/src/nginx-$NGINX_VERSION/
+
+RUN \
+	echo "Patching nginx to enable ssl stapling ..." \
+	&& git apply Enable_BoringSSL_OCSP.patch
+
+WORKDIR /usr/src/
 
 RUN \
 	echo "Cloning brotli $NGX_BROTLI_COMMIT ..." \

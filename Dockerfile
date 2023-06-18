@@ -112,8 +112,7 @@ RUN \
 	&& apk add --no-cache --virtual .geoip2-build-deps \
 		libmaxminddb-dev \
 	&& apk add --no-cache --virtual .njs-build-deps \
-		readline-dev \
-		git
+		readline-dev
 
 WORKDIR /usr/src/
 
